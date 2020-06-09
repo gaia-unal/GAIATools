@@ -1,0 +1,20 @@
+{% extends "layout.twig.html" %}
+{% block inner %}
+<div class="presentacion" >
+    <form action="permisosUsuarios.php" method="post">
+        <header autofocus><b>Lista de usuarios para ser habilitados o deshabilitados</b></header><br>
+        <div id='recursos'></div>
+        <!--Es necesario para garantizar que se entre al post, ya que el admin puede querer eliminar todos los permisos-->
+        <input type="hidden" name="garantizarPost" />
+        <input class="btn" type="submit" value="GUARDAR"> 
+    </form>
+</div>
+<script type="text/javascript">
+    var onload = function cargarRE (){
+        var datos = {id : '{{idUsuario}}' };
+        $.post("../ajax/listarUsuario-ajax.php", datos, function(data) {
+            $("#recursos").html(data);
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,285 @@
+{% extends "layout.twig.html" %}
+{% block inner %}
+<div class="presentacion">
+    <div>
+        <h3 class="bienvenida">
+            Aquí se presenta su información personal, para verificarla deberá observar
+            los datos presentados a continuación, cuando modifique algún dato debe seleccionar
+            el botón "Actualizar" para guardar la información, o puede hacer otras tareas como gestionar recursos educativos a través del menú que se encuentra a la izquierda de la página.<br> En la parte superior de la página puede seguir el enlace "Cerrar Sesión" si desea finalizar.<br><br>
+        </h3>
+    </div>
+<form class="contact_form" id="form" method="post" action="informacionPersonal.php"><div><ul>
+    <li><label id="nombre" class="nombre" >Nombre:</label> 
+    <input value="{{nombre}}" autofocus type="text" name="nombre" id="nombre" class="name" placeholder="Primer y Segundo Nombre" required /></li> 
+    <li><br><label id="apellido" class="apellido">Apellido(s):</label> 
+    <input value="{{apellido}}" id="apellido" name="apellido" class="surname" type="text" placeholder="Primer y Segundo Apellido" required /></li>
+    <li><label id="correo" class="correo" >Correo:</label> 
+    <input value="{{correo}}" id="correo" class="email" type="email" name="correo" placeholder="name@ejemplo.com" required /></li>
+    <li><label id="genero" class="genero" >Género</label> 
+    {% if genero=='Femenino' %}
+        <input name="genero" type="radio" value="Femenino" id="femenino" class="voz" checked/>Femenino
+        <input name="genero" type="radio" value="Masculino" id="masculino" class="voz" />Masculino
+        <input id="generoActual" type="hidden" value="femenino" />
+    {% elseif genero=='Masculino' %}
+        <input name="genero" type="radio" value="Femenino" id="femenino" class="voz" />Femenino
+        <input name="genero" type="radio" value="Masculino" id="masculino" class="voz" checked />Masculino
+        <input id="generoActual" type="hidden" value="femenino" />
+    {% else%}
+        <input name="genero" type="radio" value="Femenino" id="femenino" class="voz" />Femenino
+        <input name="genero" type="radio" value="Masculino" id="masculino" class="voz" />Masculino
+        <input id="generoActual" type="hidden" value="no fue seleccionado" />
+    {% endif %}</li>
+    <li><label id="fecha_nacimiento" >Fecha de Nacimiento</label>
+    <input value="{{fecha}}" name="fecha_nacimiento" id="fecha_nacimiento" class="fecha_nacimiento" type="text" placeholder="DD/MM/AA" /><br></li>
+    <li><label id="institucion" >Institución Educativa</label>
+    <input value="{{instituto}}" name="institucion" class="institucion" id="institucion" type="text"  placeholder="Universidad Nacional de Colombia" /></li>
+    <br><li><label id="nivel" class="nivel" >Nivel Educativo</label>
+    <select name="nivel" class="registro">
+        {% if  nivel=='No Definido' %}<option id="nodefinido" selected>No Definido</option>{%else%}<option id="nodefinido" >No Definido</option>{%endif%}
+        {% if  nivel=='Básica Primaria' %}<option id="basicaprimaria" selected>Básica Primaria</option>{%else%}<option id="basicaprimaria">Básica Primaria</option>{%endif%}
+        {% if  nivel=='Básica Secundaria' %}<option id="basicasecundaria" selected>Básica Secundaria</option>{%else%}<option id="basicasecundaria">Básica Secundaria</option>{%endif%}
+        {% if  nivel=='Educación Media' %}<option id="educacionmedia" selected>Educación Media</option>{%else%}<option id="educacionmedia">Educación Media</option>{%endif%}
+        {% if  nivel=='Educación Superior' %}<option id="educacionsuperior" selected>Educación Superior</option>{%else%}<option id="educacionsuperior">Educación Superior</option>{%endif%}
+        {% if  nivel=='Carrera Técnica/Tecnológica' %}<option id="carreratecnicaotecnologica" selected>Carrera Técnica/Tecnológica</option>{%else%}<option id="carreratecnicaotecnologica">Carrera Técnica/Tecnológica</option>{%endif%}
+        {% if  nivel=='Pregrado' %}<option id="pregrado" selected>Pregrado</option>{%else%}<option id="pregrado">Pregrado</option>{%endif%}
+        {% if  nivel=='Especialización' %}<option id="especializacion" selected>Especialización</option>{%else%}<option id="especializacion">Especialización</option>{%endif%}
+        {% if  nivel=='Maestría' %}<option id="maestria" selected>Maestría</option>{%else%}<option id="maestria">Maestría</option>{%endif%}
+        {% if  nivel=='Doctorádo' %}<option id="doctorado" selected>Doctorádo</option>{%else%}<option id="doctorado">Doctorádo</option>{%endif%}
+        {% if  nivel=='Posdoctorado' %}<option id="posdoctorado" selected>Posdoctorado</option>{%else%}<option id="posdoctorado">Posdoctorado</option>{%endif%}
+    </select><input type="hidden" id="listaNivelEducativo" value="No Definido, Básica Primaria, Básica Secundaria, Educación Media, Educación Superior, Carrera Técnica o Tecnológica, Pregrado, Especialización, Maestría, Doctorádo o Posdoctorado." />
+        {% if  nivel=='No Definido' %}<input id="niveleducativo" type='hidden' value="No Definido" />{%endif%}
+        {% if  nivel=='Básica Primaria' %}<input id="niveleducativo" type='hidden' value="Básica Primaria" />{%endif%}
+        {% if  nivel=='Básica Secundaria' %}<input id="niveleducativo" type='hidden' value="Básica Secundaria"/>{%endif%}
+        {% if  nivel=='Educación Media' %}<input id="niveleducativo" type='hidden' value=">Educación Media" />{%endif%}
+        {% if  nivel=='Educación Superior' %}<input id="niveleducativo" type='hidden' value="Educación Superior" />{%endif%}
+        {% if  nivel=='Carrera Técnica/Tecnológica' %}<input id="niveleducativo" type='hidden' value="Carrera Técnica o Tecnológica" />{%endif%}
+        {% if  nivel=='Pregrado' %}<input id="niveleducativo" type='hidden' value="Pregrado" />{%endif%}
+        {% if  nivel=='Especialización' %}<input id="niveleducativo" type='hidden' value="Especialización" />{%endif%}
+        {% if  nivel=='Maestría' %}<input id="niveleducativo" type='hidden' value="Maestría" />{%endif%}
+        {% if   nivel=='Doctorádo' %}<input id="niveleducativo" type='hidden' value="Doctorádo" />{%endif%}
+        {% if  nivel=='Posdoctorado' %}<input id="niveleducativo" type='hidden' value="Posdoctorado" />{%endif%}
+   </li>
+    <li><label id="need" class="need">Tipo de discapacidad</label><select name="need" id='listaNeed' class="registro"></select><input type="hidden" id="needActual" value="{{needActual}}"/><input type="hidden" id="opcionesNeed" value="{{opcionesNeed}}"/></li>
+    <li><center><br><label style='color: #080'>{{mensaje}}</label><br></center></li>
+    <li><input type="submit" id="iniciar" class="ini" value="ACTUALIZAR" ></li>
+</ul></div></form>
+<input value='{{need}}' type="hidden" id='lista'/>
+
+<script src="http://code.jquery.com/jquery-1.12.1.js"></script>
+<script src="http://code.responsivevoice.org/responsivevoice.js"></script>
+
+<script type="text/javascript">
+    var lista = $("#lista").val();
+    if (lista.length>0){ $("#listaNeed").html(lista); }
+    var onload = function cargarRE (){
+        
+        var texto="";
+        if ('{{mensaje}}'==""){
+            texto = "Aquí se presenta su información personal, para verificarla pronuncie seguir, o pronunce menú, recuerde que para finalizar su sesión de usuario debe mensionar cerrar sesión."; //agregar instrucciones.
+        }else{ 
+            texto = '{{mensaje}}'+". Recuerda que puedes utilizar el menu o cerrar sesión."; 
+        }
+        sintetizadorVoz(texto);
+    }
+    function leerDatosPersonales(){
+        gcse.pause();
+        gcse.src = "";
+        var texto = "Su nombre es "+$('.name').val()+". Su apellido es "+$('.surname').val()+". Su correo electronico es "+$('.email').val()+". Su genero es "+$('#generoActual').val()+". Su fecha de nacimiento es "+$('.fecha_nacimiento').val()+". Su institución es "+$('.institucion').val()+". Su nivel educativo es "+$('#niveleducativo').val()+". Su tipo de discapacidad es "+$('#needActual').val()+". Para guardar cambios pronuncie actualizar.";
+        sintetizadorVoz(texto);
+    }
+    //var valor = localStorage.getItem("controlador");
+        //if(valor==="true"){
+            "use strict";//inicio de la implementación de la libreria annyang para el ingreso de comandos de voz con cada una de las palabras que se implementan y que a medida de que la plataforma se mueve entre las distintas paginas, se informa las palabras que estan activas y con las que se puede logear y moverse entre ellas.
+            if (annyang) {
+                "use strict"
+                var commands = {
+                    'cerrar sesión':function(){window.location="cierre.php";},
+                    'menú':function(){//menu e información de todos los recursos educativos y funcionalidades de la creación de recursos, presentacion, visialización, editar, eliminación y seguir.
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "Si deseas ver la página principal, pronuncia presentación. Pero tambien puedes realizar operaciones sobre los recursos educativos, solo debes mencionar la palabra visualizar, crear, editar o eliminar según la acción que requieras utilizar"; 
+                        sintetizadorVoz(texto);
+                    },//cada una de las palabras de los comando de voz, realizaran acciones distinta, despues de cada sección de lectura de pantalla se informara que comandos de voz estan activados y las palabras que tinen que decir para cada funcionalidad y recorrido entre cada una de las paginas
+                    'presentación':function(){window.location="principal.php";},
+                    'visualizar':function(){window.location="listarRecurso.php";},
+                    'crear':function(){window.location="crearRecurso.php";},
+                    'editar':function(){window.location="editarRecurso.php";},
+                    'eliminar':function(){window.location="eliminarRecurso.php";},
+                    'seguir' : function(){
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "Le diremos su información personal, cuando requiera cambiar un dato debe mensionar la misma palabra clave que en esta grabación se pronuncia seguido por el dato, por ejemplo su nombre es "+'{{nombre}}'+" y para usted modificarlo debe pronunciar nombre y consecutivamente mensionar su verdadero nombre. Luego debe pronunciar la palabra continuar para verificar los datos.";
+                        sintetizadorVoz(texto);
+                        leerDatosPersonales();
+                    },
+                    'continuar' : function(){
+                        leerDatosPersonales();
+                    },
+                    'nombre *v' : function(v){//en general cada palabra que esta en verde son las palabras que se tienen que decir para moverse entre cada una de las funcionalidades de la plataforma GAIA Tools
+                        gcse.pause();
+                        gcse.src = "";
+                        if(/deletrear/.test(v) || /de letrear/.test(v) ){
+                            v = limpiarDato(v);
+                        }
+                        var texto = "Su nombre es "+v+". Para guardar cambios pronuncie actualizar o seguir para rectificar los datos nuevamente.";
+                        sintetizadorVoz(texto);
+                        $('.name').val(v);
+                    },
+                    'apellido *v' : function(v){
+                        gcse.pause();
+                        gcse.src = "";
+                        if(/deletrear/.test(v) || /de letrear/.test(v) ){
+                            v = limpiarDato(v);
+                        }
+                        var texto = "Su apellido es "+v+". Para guardar cambios pronuncie actualizar o seguir para rectificar los datos nuevamente.";
+                        sintetizadorVoz(texto);
+                        $('.surname').val(v);
+                    },
+                    'correo *v' : function(v){//en general cada palabra que esta en verde son las palabras que se tienen que decir para moverse entre cada una de las funcionalidades de la plataforma GAIA Tools
+                        gcse.pause();
+                        gcse.src = "";
+                        if(/deletrear/.test(v) || /de letrear/.test(v) ){
+                            v = limpiarDato(v);
+                        }
+                        /*var texto = "Su correo electrónico es "+v+". Para continuar \n\
+                                    pronuncie hay que identificar su genero, mensione \n\
+                                    la palabra femenino o masculino ";*/
+                        v = v.replace("arroba","@");
+                        v = v.replace(/ /g, "");
+                        v = normalize(v);
+                        var texto = "Su correo electrónico es "+v+". Para guardar cambios pronuncie actualizar o seguir para rectificar los datos nuevamente.";
+                        sintetizadorVoz(texto);
+                        $('.email').val(v); 
+                    },
+                    'femenino': function(){
+                        jQuery("#femenino").attr('checked', true);
+                        var texto = "Su genero sexual es femenino. Para guardar cambios pronuncie actualizar o seguir para rectificar los datos nuevamente.";
+                        sintetizadorVoz(texto);
+                    },
+                    'masculino': function(){
+                        jQuery("#masculino").attr('checked', true);
+                        var texto = "Su genero sexual es masculino. Para guardar cambios pronuncie actualizar o seguir para rectificar los datos nuevamente.";
+                        sintetizadorVoz(texto);
+                    },
+                    'día *v':function(v){
+                        var texto = "Su dia de nacimiento fue "+v+". Continúe con el mes diciendo mes seguido del número del mes correspondiente a su nacimiento.";
+                        sintetizadorVoz(texto);
+                        var dia=v+"/";
+                        if($(".fecha_nacimiento").val()!=""){
+                            var dato = $("#fecha_nacimiento").val();
+                            var pos = dato.indexOf("/");
+                            if(pos>-1){
+                                dato = dato.substring(pos+1);
+                                dia = dia+dato;
+                            }else{
+                                texto = "hay un error, por favor mensione nuevamente la palabra día.";
+                                sintetizadorVoz(texto);
+                                dia="";
+                            }
+                        }
+                        $('.fecha_nacimiento').val(dia);
+                    },
+                    'mes *v':function(v){
+                        var texto = "Su mes de nacimiento fue "+v+". Continúe con el año diciendo año seguido año correspondiente a su nacimiento.";
+                        sintetizadorVoz(texto);
+                        var mes=v+"/";
+                        if($(".fecha_nacimiento").val()!=""){
+                            var dato = $(".fecha_nacimiento").val();
+                            var pos = dato.indexOf("/");
+                            if(pos>-1){
+                                dato = dato.substring(0,pos+1);
+                                mes = dato+mes;
+                                dato = dato.substring(pos+1);
+                                pos = dato.indexOf("/");
+                                if(pos>-1){
+                                    dato = dato.substring(pos+1);
+                                    mes = mes+dato;
+                                }
+                            }else{
+                                texto = "hay un error, por favor mensione nuevamente la palabra día.";
+                                sintetizadorVoz(texto);
+                                mes="";
+                            }
+                        }
+                        $('.fecha_nacimiento').val(mes);
+                    },
+                    'año *v':function(v){
+                        var texto = "Su año de nacimiento fue "+v+". Para guardar cambios pronuncie actualizar o seguir para rectificar los datos nuevamente.";
+                        sintetizadorVoz(texto);
+                        var año=v;
+                        if($(".fecha_nacimiento").val()!=""){
+                            var dato = $(".fecha_nacimiento").val();
+                            var pos = dato.lastIndexOf("/");
+                            if(pos>-1){
+                                dato = dato.substring(0,pos+1);
+                                año = dato+año;
+                            }else{
+                                texto = "hay un error, por favor mensione nuevamente la palabra día.";
+                                sintetizadorVoz(texto);
+                                año="";
+                            }
+                        }
+                        $('.fecha_nacimiento').val(año);
+                        texto = "Su fecha de nacimiento es "+$('.fecha_nacimiento').val()+" recuerde continuar con la institución.";
+                        sintetizadorVoz(texto);
+                    },
+                    'institución *v':function(v){
+                        gcse.pause();
+                        gcse.src = "";
+                        if(/deletrear/.test(v) || /de letrear/.test(v) ){
+                            v = limpiarDato(v);
+                        }
+                        var texto = "Su institución es "+v+". Para guardar cambios pronuncie actualizar o seguir para rectificar los datos nuevamente.";
+                        sintetizadorVoz(texto);
+                        $('.institucion').val(v);
+                    },
+                    'nivel educativo':function(){
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "Los niveles educativos válidos son: "+$("#listaNivelEducativo").val()+" Recuerda pronunciar seleccionar nivel seguido del nombre completo de la opción.";
+                        sintetizadorVoz(texto);
+                    },
+                    'seleccionar nivel *v':function(v){//en general cada palabra que esta en verde son las palabras que se tienen que decir para moverse entre cada una de las funcionalidades de la plataforma GAIA Tools
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "usted a elegido el nivel educativo "+v+" Para continuar mensione tipo de discapacidad y le serán leídas las opciones. Para guardar cambios pronuncie actualizar o seguir para rectificar los datos nuevamente.";
+                        sintetizadorVoz(texto);
+                        var vi = "#"+normalize(v);
+                        jQuery(vi).attr('selected', 'selected');
+                        $('#niveleducativo').val(v);
+                    },
+                    'tipo de discapacidad':function(){
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "Los tipos de discapacidad válidos son: "+$("#opcionesNeed").val()+" Recuerda pronunciar seleccionar necesidad seguido del nombre completo de la opción.";
+                        sintetizadorVoz(texto);
+                    },
+                    'seleccionar necesidad *v':function(v){
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "Usted a elegido la "+v+" Para guardar cambios pronuncie actualizar o seguir para rectificar los datos nuevamente.";
+                        sintetizadorVoz(texto);
+                        var vi = "#"+normalize(v);
+                        jQuery(vi).attr('selected', 'selected');
+                    },
+                    'actualizar':function(){
+                        document.forms['form'].submit();  
+                    }
+                };
+                // OPTIONAL: activate debug mode for detailed logging in the console
+                annyang.debug();
+                // Add voice commands to respond to
+                annyang.addCommands(commands);
+                // OPTIONAL: Set a language for speech recognition (defaults to English)
+                annyang.setLanguage('es');
+                // Start listening. You can call this here, or attach this call to an event, button, etc.
+                annyang.start();
+            } else {
+                $(document).ready(function() {
+                    $('#unsupported').fadeIn('fast');
+                });
+            }
+        //}
+</script>
+</div>
+{% endblock %}

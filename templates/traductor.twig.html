@@ -1,0 +1,54 @@
+{% extends "layout.twig.html" %}
+{% block inner %}
+<div id="formulario">
+    <form id="cambapli" action="{{ruta}}" method="post">
+        <!--input type="hidden" name="datos" value="{{tmp}}"></input-->
+        <input type="hidden" name="id" value="{{id}}">
+        <input type="hidden" name="titulo" value="{{titulo}}">
+        <input type="hidden" name="existente" value="{{existente}}">
+        <!--input type="hidden" name="idItem" value="{{idItem}}"></input-->
+        <input type="hidden" name="modificado" value="0">
+    </form>
+</div>
+<script type="text/javascript">
+    var redireccionar = '{{siguiente}}';
+    if(redireccionar!=='0'){
+        document.forms['cambapli'].submit();
+    }
+    function guardarTemp(urlAplicacion){
+        $("#ruta").html("<input type='hidden' name='ruta' value='"+urlAplicacion+"' />");
+        document.forms['meta'].submit();
+    }
+</script>
+<div class="presentacion">
+    <div id="aplicaciones" >
+    {% if estado !=''%}
+        <button id="editarSiguiente" onclick="guardarTemp('{{actividad}}');" >SIGUIENTE</button>
+    {% else %}
+        <font color="#57934E" size="6">Bienvenido {{nombreCorto2}}</font><br><br>
+        <header><h1><font color="#0489B1" size="5">Elija cuál de las siguientes actividades desea crear.</font></h1></header><br>
+        <p><!--a  href="seleccionAskNow.php" id="logo-aplicativo"><img src="../images/8.png" id="logo-aplicativo" alt="logo aplicativo preguntas"></a-->
+            <a href="puenteEnsenaloEmparejar.php"><img id="logo-aplicativo2" src="../images/emparejar.png" alt="logo actividad emparejalo"></a>
+            <a href="puenteEnsenaloOptionCorrect.php"><img id="logo-aplicativo2" src="../images/opcionmultiple.png" alt="logo actividad escribelo"></a>
+            <a href="puenteEnsenaloResponseCorrect.php"><img id="logo-aplicativo2" src="../images/respuestacorrecta.png" alt="logo actividad preguntas"></a><br>
+        </p>
+        <p align="left">
+           <font color="#0489B1" size="4"><strong> Emparejar:</strong> </font><font size="3">El estudiante debe asociar la seña con la respuesta correcta.</font><br>
+           <font color="#0489B1" size="4"><strong> Opción correcta:</strong> </font><font size="3">Se muestra la seña y el estudiante debe elegir la respuesta entre A),B),C),D).</font><br>
+           <font color="#0489B1" size="4"><strong> Respuesta correcta:</strong> </font><font size="3">Se muestra la seña,el estudiante debe escribir correctamente la respuesta.</font>
+        </p>
+    {% endif %}
+    </div>
+</div>
+<input value='{{know}}' type="hidden" id='listCono'/>
+<input value='{{need}}' type="hidden" id='listNeed'/>
+<input value='{{estado}}' type="hidden" id='listEstado'/>
+<script type="text/javascript">
+    var lista = $("#listCono").val();
+    if (lista.length > 0){$("#areasConocimiento").html(lista);}
+    var lista = $("#listNeed").val();
+    if (lista.length > 0){$("#need").html(lista);}
+    var lista = $("#listEstado").val();
+    if (lista.length > 0){$("#opcionEstado").html(lista);}
+</script>
+{% endblock %}

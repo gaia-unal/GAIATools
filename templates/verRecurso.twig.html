@@ -1,0 +1,506 @@
+{% extends "layout.twig.html" %}{% block inner %}
+{% if estilo=='1'%}
+    <div class="presentacion" autofocus>{% set finLibro = "Al pronunciar presentación puedes regresar." %}
+{%elseif estilo=='2'%}
+    <div class="inner" autofocus>{% set finLibro = "Al pronunciar página principal puedes regresar." %}
+{%endif%}
+{% if idCuest==5 %}
+<!-- librerias necesarias para el aspecto y funcionamiento de la aplicacion libro -->
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="Moleskine Notebook with jQuery Booklet" />
+    <meta name="keywords" content="jquery, book, flip, pages, moleskine, booklet, plugin, css3 "/>
+    <link rel="stylesheet" href="../templates/booklet/jquery.booklet.1.1.0.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="../templates/css/style.css" />
+    <script type="text/javascript" src="../templates/booklet/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="../templates/booklet/jquery.easing.1.3.js"></script>
+    <script type="text/javascript" src="../templates/booklet/jquery.booklet.1.1.0.min.js"></script>
+
+
+<!--div class="libro"-->
+    <header><h2>LIBRO: {{titulo}}</h2></header>
+    <div class="prim">
+        <div class="book_wrapper">
+            <a id="next_page_button">Pasar a la página <br>siguiente</a>
+            <a id="prev_page_button">Pasar a la página <br>anterior</a>
+            <div id="loading" class="loading">Loading pages...</div>
+            <div id="mybook">
+                <div class="b-load" id="texto">
+                    <div class="pagina">
+                        <br><br><br><header class="titulo"><h1>{{titulo}}</h1></header><br>
+                        <br><header class="titulo"><h1>Creado por:<br><br>{{autor}}</h1></header>
+                        <input type="hidden" id="leerpag1" value="{{titulo}}  por {{autor}}" />
+                    </div>
+                    {% set pag = 2 %}
+                    {% for n in capitulos %}
+                    <div class="pagina">
+                        <br><br><label><h4>{{n.capitulo}}</h4></label><br><br>
+                        {%if n.imagen != ""%}
+                        <img class="image" src="{{n.imagen}}" alt="" />
+                        {%endif%}
+                        <p class="contenido">{{n.contenido}}</p>
+                        <input type="hidden" id="leerpag{{pag}}" value="{{n.capitulo}}{{n.contenido}}" />
+                        {% set pag = pag+1 %}
+                    </div>
+                    {% endfor %}
+                    <div class="pagina">
+                        <br><br><label><h4>FIN</h4></label><br><br>
+                        <input type="hidden" id="leerpag{{pag}}" value="fin. {{finLibro}}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h2>...</h2>
+    <input id="is" type="button" onclick="redireccionar();" class="voz" value="REGRESAR"><br>
+    <script type="text/javascript">
+        $(function() {
+            var $mybook         = $('#mybook');
+            var $bttn_next      = $('#next_page_button');
+            var $bttn_prev      = $('#prev_page_button');
+            var $loading        = $('#loading');
+            var $mybook_images  = $mybook.find('div.pagina');
+            var cnt_images      = $mybook_images.length;
+            var loaded          = 0;
+            //preload all the images in the book,
+            //and then call the booklet plugin
+            $mybook_images.each(function(){
+                var $img    = $(this);
+                var source  = $img.attr('src');
+                ++loaded;
+                if(loaded === cnt_images){
+                    $loading.hide();
+                    $bttn_next.show();
+                    $bttn_prev.show();
+                    $mybook.show().booklet({
+                        name:               null,                            // name of the booklet to display in the document title bar
+                        width:              800,                             // container width
+                        height:             500,                             // container height
+                        speed:              600,                             // speed of the transition between pages
+                        direction:          'LTR',                           // direction of the overall content organization, default LTR, left to right, can be RTL for languages which read right to left
+                        startingPage:       0,                               // index of the first page to be displayed
+                        easing:             'easeInOutQuad',                 // easing method for complete transition
+                        easeIn:             'easeInQuad',                    // easing method for first half of transition
+                        easeOut:            'easeOutQuad',                   // easing method for second half of transition
+                        closed:             true,                           // start with the book "closed", will add empty pages to beginning and end of book
+                        closedFrontTitle:   null,                            // used with "closed", "menu" and "pageSelector", determines title of blank starting page
+                        closedFrontChapter: null,                            // used with "closed", "menu" and "chapterSelector", determines chapter name of blank starting page
+                        closedBackTitle:    null,                            // used with "closed", "menu" and "pageSelector", determines chapter name of blank ending page
+                        closedBackChapter:  null,                            // used with "closed", "menu" and "chapterSelector", determines chapter name of blank ending page
+                        covers:             false,                           // used with  "closed", makes first and last pages into covers, without page numbers (if enabled)
+                        pagePadding:        10,                              // padding for each page wrapper
+                        pageNumbers:        true,                            // display page numbers on each page
+                        hovers:             false,                            // enables preview pageturn hover animation, shows a small preview of previous or next page on hover
+                        overlays:           false,                            // enables navigation using a page sized overlay, when enabled links inside the content will not be clickable
+                        tabs:               false,                           // adds tabs along the top of the pages
+                        tabWidth:           60,                              // set the width of the tabs
+                        tabHeight:          20,                              // set the height of the tabs
+                        arrows:             false,                           // adds arrows overlayed over the book edges
+                        cursor:             'pointer',                       // cursor css setting for side bar areas
+                        hash:               false,                           // enables navigation using a hash string, ex: #/page/1 for page 1, will affect all booklets with 'hash' enabled
+                        keyboard:           true,                            // enables navigation with arrow keys (left: previous, right: next)
+                        next:               $bttn_next,                     // selector for element to use as click trigger for next page
+                        prev:               $bttn_prev,                     // selector for element to use as click trigger for previous page
+                        menu:               null,                            // selector for element to use as the menu area, required for 'pageSelector'
+                        pageSelector:       false,                           // enables navigation with a dropdown menu of pages, requires 'menu'
+                        chapterSelector:    false,                           // enables navigation with a dropdown menu of chapters, determined by the "rel" attribute, requires 'menu'
+                        shadows:            true,                            // display shadows on page animations
+                        shadowTopFwdWidth:  166,                             // shadow width for top forward anim
+                        shadowTopBackWidth: 166,                             // shadow width for top back anim
+                        shadowBtmWidth:     50,                              // shadow width for bottom shadow
+                        before:             function(){},                    // callback invoked before each page turn animation
+                        after:              function(){}                     // callback invoked after each page turn animation
+                    });
+                }
+            });
+        });
+    </script>
+<!--/div-->
+{% else %}
+    <header><h1><b>{% if idCuest in [1,2,3,4] %}PREGUNTA-LO{%elseif idCuest==6 %}ESCRIBE-LO{%endif%}<br>{{titulo}}</h1></header>	
+    <form id="formu" action="verRecurso.php" method="post">
+        <input type='hidden' name='idCuestionario' value="{{idCuest}}">
+        <input type='hidden' name='validar' value="{{validar}}">
+        <input type='hidden' name='id' value="{{id}}">
+        <input type='hidden' name='pos' value="{{pos}}">
+        <input type='hidden' name='correctos' value="{{conteoCorrectos}}">
+        <input type='hidden' name='erroneos' value="{{conteoErroneo}}">
+        <input type='hidden' name='titulo' value="{{titulo}}">
+        <input type='hidden' name='estilo' value="{{estilo}}">
+        <input type='hidden' name='autor' value="{{autor}}">
+        {% if siguiente == 1 %}
+        <br><h2><b>{% if idCuest in [1,2,3,4] %}PREGUNTA:{%elseif idCuest==6 %}TÍTULO:{%endif%}</b> <br>{{datosPreg.pregunta}}</h2>
+            {% if idCuest == 4 %}   
+                <h2><textarea id='respuesta' class='textarea1' rows='automatically' 
+                              cols='automatically' placeholder='RESPUESTA'></textarea></h2><br><br>
+                <input type="hidden" name="respuesta" id="respAbierta">
+                <input type="hidden" id="respCorrecta" name="respCorr" value={{respAbierta}}>
+                <p id='resultNormalizacion'></p>
+                <!--<script>alert('puntuacion'+$('#resultNormalizacion').html());</script><br>-->
+            {% elseif idCuest in  [1,3] %}<!--preguntas cerradas de eleccion multiple (unica respuesta) y falso y verdadero-->
+            {% set numopcion=1 %}
+                <h2><b>SELECCIONE SU RESPUESTA:<br></b><br>
+                    {% for opcion in datosOpcion %}
+                        <input type="radio" name="respuesta" value={{opcion.respuesta}} id="{{numopcion}}" >{{opcion.opcion}}</input><br>
+                        <input type="hidden" id="opcionesPreg" value="" />
+                        <script>$('#opcionesPreg').val($('#opcionesPreg').val()+' Opción {{numopcion}}: {{opcion.opcion}}.');</script>
+                    {% set numopcion=numopcion+1 %}
+                    {% endfor %}
+                </h2>
+            {% elseif idCuest==6%}
+                <label>{{respAbierta}}</label><br><br><br>
+            {% endif %}
+            <input id="is" onclick="dispararFrom();" type="button" class="voz" value="SIGUIENTE"><br>
+            <input id="is" type="button" onclick="redireccionar();" class="voz" value="REGRESAR">
+            {% endif %}
+    </form>
+    {% if siguiente == 0%}
+    {% if mensajeRetro != "" %}
+        <br><br><label id="calificacion">{{mensaje}}</label><br>
+    {% else %}
+        <br><br><label id="retro">{{mensaje}}</label><br>
+    {% endif %}
+    <label id="retro">{{mensajeRetro}}</label><br><br>
+        <form id="siguienteItem" action="verRecurso.php" method="post">
+            <input type='hidden' name='idCuestionario' value="{{idCuest}}">
+            <input type='hidden' name='validar' value="{{validar}}">
+            <input type='hidden' name='id' value="{{id}}">
+            <input type='hidden' name='pos' value="{{pos}}">
+            <input type='hidden' name='correctos' value="{{conteoCorrectos}}">
+            <input type='hidden' name='erroneos' value="{{conteoErroneo}}">
+            <input type='hidden' name='titulo' value="{{titulo}}">
+            <input type='hidden' name='estilo' value="{{estilo}}">
+            <input id="is" type="submit" class="voz" value="CONTINUAR"><br>
+            <input id="is" type="button" onclick="redireccionar();" class="voz" value="REGRESAR">
+        </form>
+    {% elseif siguiente == 2 %}
+        {% set mensaje2="El recurso educativo a finalizado" %}
+        {% if idCuest in [1,2,3,4]%}
+        {% set mensaje2=mensaje2~", has tenido un total de "~conteoCorrectos~" ítems acertados y un total de "~conteoErroneo~" ítems erróneos." %}
+        {%endif%}
+        <label><h1>{{mensaje2}}</h1></label><br>
+        <br>
+        <input id="is" type="button" onclick="redireccionar();" class="voz" value="REGRESAR">
+    {% endif %}
+{% endif %}
+<script>
+    function redireccionar(){
+        location.href='{{retorno}}';
+    }
+    function dispararFrom(){
+        var cuestionario = '{{idCuest}}';
+        if(cuestionario==='4'){calificar();}
+        document.forms['formu'].submit();
+    }
+    function dispararSiguiente(){
+        $("#siguienteItem").submit();
+    }
+    function calificar(){
+        var string = $("#respuesta").val();
+        var palClaves = $("#respCorrecta").val();
+        palClaves = palClaves.replace(/%/gi," ");
+        $("#respAbierta").val(normalizar(string, palClaves));
+    }
+    function normalizar(string, palClaves){
+        //var segimiento="";
+        var j=0, pal, tamEst, tamPro, tamMin, dOverlap, contRep=0;
+        var respuEstud, respuProfe;
+        var analEstud = new Array();
+        var analProfe = new Array();
+        var pregunta = '{{datosPreg.pregunta}}';
+        //convertir la cadena en minuscula
+        string = string.toLowerCase();
+        palClaves = palClaves.toLowerCase();
+        pregunta = pregunta.toLowerCase();
+        //quita tildes y caracteres especiales ademas de signos de puntuacion, agrupacion, admiracion y otros
+        string = normalize(string);
+        palClaves = normalize(palClaves);
+        pregunta = normalize(pregunta);
+        //palabras es un arreglo separador de palabras
+        respuEstud = string.split(" ");
+        respuProfe = palClaves.split(" ");
+        pregunta = pregunta.split(" ");
+        //eliminar palabra iguales entre respuesta profesor y la pregunta.
+        palClaves="";
+        for (var i in pregunta){
+            for (var k in respuProfe){
+                if (pregunta[i]!==respuProfe[k]){
+                    palClaves = respuProfe[k]+" ";
+                }
+            }
+        }
+        respuProfe = palClaves.split(" ");
+        
+        //Retirar espacios en blanco, y palabras de union (a, de, en, un...) StopWord
+        for (var i in respuEstud) {
+            pal=respuEstud[i];
+            if ( !invalidas(pal) ) {
+                analEstud[j]=respuEstud[i];j++;
+            }
+        }
+        j=0;
+        for (var i in respuProfe) {pal=respuProfe[i];if ( !invalidas(pal) ) {analProfe[j]=respuProfe[i];j++;}}
+        //ordenar el arreglo
+        analEstud.sort();
+        analProfe.sort();
+        for (var i in analEstud ) {for (var k in analProfe ) {if (analEstud[i]===analProfe[k]) {contRep = contRep + 1;}}}
+        //tamaños de las cadenas
+        tamEst = analEstud.length;
+        tamPro = analProfe.length;
+        if (tamEst>tamPro) {tamMin = tamEst;}else{tamMin = tamPro;}
+        dOverlap = contRep/tamMin;
+        if (dOverlap>0.5) {return 't';}else{return 'f';}
+    }
+    function normalize (str) {
+        var from = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÇç´'`,;.:-_^¨{}[]*+~¡?¿!#$%&/()=°!|ºª";
+        var to   = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuucc";
+        var mapping = {};
+        for(var i = 0, j = from.length; i < j; i++ ){mapping[ from.charAt( i ) ] = to.charAt( i );}
+        var ret = [];
+        for( var i = 0, j = str.length; i < j; i++ ) {var c = str.charAt( i );if( mapping.hasOwnProperty( str.charAt( i ) ) ){ret.push( mapping[ c ] );}else{ret.push( c );}}      
+        return ret.join( '' );
+    }
+    function invalidas(str){
+        var i, es;
+        //var prepos = ['un', 'una', 'unas', 'unos', 'uno', 'sobre', 'todo', 'también', 'tras', 'otro', 'algún', 'alguno', 'alguna', 'algunos', 'algunas', 'ser', 'es', 'soy', 'eres', 'somos', 'sois', 'estoy', 'esta', 'estamos', 'estais', 'estan', 'como', 'en', 'para', 'atras', 'porque', 'por qué', 'estado', 'estaba', 'ante', 'antes', 'siendo', 'ambos', 'pero', 'por', 'poder', 'puede', 'puedo', 'podemos', 'podeis', 'pueden', 'fui', 'fue', 'fuimos', 'fueron', 'hacer', 'hago', 'hace', 'hacemos', 'haceis', 'hacen', 'cada', 'fin', 'incluso', 'primero', 'desde', 'conseguir', 'consigo', 'consigue', 'consigues', 'conseguimos', 'consiguen', 'ir', 'voy', 'va', 'vamos', 'vais', 'van', 'vaya', 'gueno', 'ha', 'tener', 'tengo', 'tiene', 'tenemos', 'teneis', 'tienen', 'el', 'la', 'lo', 'las', 'los', 'su', 'aqui', 'mio', 'tuyo', 'ellos', 'ellas', 'nos', 'nosotros', 'vosotros', 'vosotras', 'si', 'dentro', 'solo', 'solamente', 'saber', 'sabes', 'sabe', 'sabemos', 'sabeis', 'saben', 'ultimo', 'largo', 'bastante', 'haces', 'muchos', 'aquellos', 'aquellas', 'sus', 'entonces', 'tiempo', 'verdad', 'verdadero', 'verdadera','cierto', 'ciertos', 'cierta', 'ciertas', 'intentar', 'intento', 'intenta', 'intentas', 'intentamos', 'intentais', 'intentan', 'dos', 'bajo', 'arriba', 'encima', 'usar', 'uso', 'usas', 'usa', 'usamos', 'usais', 'usan', 'emplear', 'empleo', 'empleas', 'emplean', 'ampleamos', 'empleais', 'valor', 'muy', 'era', 'eras', 'eramos', 'eran', 'modo', 'bien', 'cual', 'cuando', 'donde', 'mientras', 'quien', 'con', 'entre', 'sin', 'trabajo', 'trabajar', 'trabajas', 'trabaja', 'trabajamos', 'trabajais', 'trabajan', 'podria', 'podrias', 'podriamos', 'podrian', 'podriais', 'yo', 'aquel', ''];
+        var prepos = ["el", "ella", "por", "de", "los", "las", "donde", "contra", "si", "no", "para", "y", "a", "que", "este", "un", "una", "cada", "entre", "ellas", "ellos", "porque", "con", ""];
+        for (i in prepos ) {if (prepos[i] === str) {es = true;break;}else{es = false;}}
+        return es;
+    }
+</script>
+<h3 class="licencia" style="line-height: normal; text-transform: none; letter-spacing: normal; margin-top: 2em; margin-bottom: 2em; display: inline-block">
+    Este recurso educativo cuenta con la licencia Atribución – No comercial <br>
+    <img alt="Logotipo de la licencias creative commons" style="width: 5em;" src="../images/licencia.png"/>
+</h3>
+</div>
+{% if estilo=='1'%}
+
+<script src="http://code.jquery.com/jquery-1.12.1.js"></script>
+<script src="http://code.responsivevoice.org/responsivevoice.js"></script>
+
+<script type="text/javascript">
+    var onload = function (){
+        if('{{siguiente}}'==='1'){
+            var actividad = "Cuestionario llamado {{titulo}}, donde acontinuación se presenta una ";
+            var instruccion = "";
+            switch('{{idCuest}}') {
+                case '1':
+                    actividad = actividad+'Pregunta de Elección Múltiple';
+                    instruccion = 'Para conocer la pregunta pronuncia la palabra pregunta, luego pronuncia la palabra opciones, y para elegir una opción pronuncia la palabra respuesta seguido de la opción luego, confirmaremos la respuesta elegida y para calificar la respuesta pronuncia la palabra siguiente.';
+                    break;
+                case '2':
+                    actividad = actividad+'Pregunta de Selección Múltiple';
+                    break;
+                case '3':
+                    actividad = actividad+'Pregunta de Verdadero o Falso';
+                    instruccion = 'Para conocer la pregunta pronuncia la palabra pregunta, al pronunciar respuesta deberas decir si es falso o verdadero, luego, confirmaremos la respuesta elegida y para calificar la respuesta pronuncia la palabra siguiente.';
+                    break;
+                case '4':
+                    actividad = actividad+'Pregunta Abierta';
+                    instruccion = "Pronuncia preguntar para conocer la pregunta y responder seguido de la respuesta para dar solución a la pregunta, luego confirmaremos la respuesta y puedes mensionar la palabra siguiente para calificar la respuesta.";
+                    break;
+                case '5':
+                    actividad = 'Libro llamado {{titulo}}';
+                    instruccion = 'Para iniciar la lectura del libro pronuncia continuar, para cambiar de página mensiona siguiente o atrás.';
+                    break;
+                case '6':
+                    actividad = 'Escribelo llamado {{titulo}}';
+                    instruccion = 'Pronuncia la palabra titulo y luego la palabra contenido, para continuar con otro ítem pronuncia siguiente.';
+                    break;
+                case '7':
+                    actividad = 'Emparejados llamado {{titulo}}';
+                    break;
+                case '8':
+                    actividad = 'Ordénalo llamado {{titulo}}';
+                    break;
+                /*default:
+                    default break;*/
+            }
+            var texto = "Esta es la visualización del recurso "+actividad+", aquí podras ver el contenido. Recuerda que puede consultar el menú o cerrar sesión.  "+instruccion;
+        }else if('{{siguiente}}'==='0'){
+            var texto = '{{mensaje}}, pronuncia continuar para la siguiente pregunta';
+        }else if('{{siguiente}}'==='2'){
+            var texto = '{{mensaje2}} Para regresar pronuncia presentación.';
+        }
+        sintetizadorVoz(texto);
+    }
+</script>
+
+{%elseif estilo=='2'%}
+
+<script src="http://code.jquery.com/jquery-1.12.1.js"></script>
+<script src="http://code.responsivevoice.org/responsivevoice.js"></script>
+
+<script type="text/javascript">
+    var onload = function (){
+        if('{{siguiente}}'==='1'){
+            var actividad = "Cuestionario llamado {{titulo}}, donde acontinuación se presenta una ";
+            var instruccion = "";
+            switch('{{idCuest}}') {
+                case '1':
+                    actividad = actividad+'Pregunta de Elección Múltiple';
+                    instruccion = 'Para conocer la pregunta pronuncia la palabra pregunta, luego pronuncia la palabra opciones, y para elegir una opción pronuncia la palabra respuesta seguido de la opción luego, confirmaremos la respuesta elegida y para calificar la respuesta pronuncia la palabra siguiente.';
+                    break;
+                case '2':
+                    actividad = actividad+'Pregunta de Selección Múltiple';
+                    break;
+                case '3':
+                    actividad = actividad+'Pregunta de Verdadero o Falso';
+                    instruccion = 'Para conocer la pregunta pronuncia la palabra pregunta, al pronunciar respuesta deberas decir si es falso o verdadero, luego, confirmaremos la respuesta elegida y para calificar la respuesta pronuncia la palabra siguiente.';
+                    break;
+                case '4':
+                    actividad = actividad+'Pregunta Abierta';
+                    instruccion = "Pronuncia preguntar para conocer la pregunta y responder seguido de la respuesta para dar solución a la pregunta, luego confirmaremos la respuesta y puedes mensionar la palabra siguiente para calificar la respuesta.";
+                    break;
+                case '5':
+                    actividad = 'Libro llamado {{titulo}}';
+                    instruccion = 'Para iniciar la lectura del libro pronuncia continuar, para cambiar de página mensiona siguiente o atrás.';
+                    break;
+                case '6':
+                    actividad = 'Escribelo llamado {{titulo}}';
+                    instruccion = 'Pronuncia la palabra titulo y luego la palabra contenido, para continuar con otro ítem pronuncia siguiente.';
+                    break;
+                case '7':
+                    actividad = 'Emparejados llamado {{titulo}}';
+                    break;
+                case '8':
+                    actividad = 'Ordénalo llamado {{titulo}}';
+                    break;
+                /*default:
+                    default break;*/
+            }
+            var texto = "Esta es la visualización del recurso "+actividad+", aquí podras ver el contenido. Recuerda que puedes regresar diciendo página principal. O tambien puedes construir objetos educativos con iniciar sesión, pero si no puedes, registrarte en el sistema con la palabra registar. "+instruccion;
+        }else if('{{siguiente}}'==='0'){
+            var texto = '{{mensaje}}, pronuncia continuar para la siguiente pregunta';
+        }else if('{{siguiente}}'==='2'){
+            var texto = '{{mensaje2}} Para regresar pronuncia página principal.';
+        }
+        sintetizadorVoz(texto);
+    }
+</script>
+{%endif%}
+
+<script src="http://code.jquery.com/jquery-1.12.1.js"></script>
+<script src="http://code.responsivevoice.org/responsivevoice.js"></script>
+
+<script>
+    var posPagina=1;
+    //var valor = localStorage.getItem("controlador");
+        //if(valor==="true"){
+            "use strict";//inicio de la implementación de la libreria annyang para el ingreso de comandos de voz con cada una de las palabras que se implementan y que a medida de que la plataforma se mueve entre las distintas paginas, se informa las palabras que estan activas y con las que se puede logear y moverse entre ellas.
+            if (annyang) {
+                "use strict"
+                var commands = {//cada una de las palabras de los comando de voz, realizaran acciones distinta, despues de cada sección de lectura de pantalla se informara que comandos de voz estan activados y las palabras que tinen que decir para cada funcionalidad y recorrido entre cada una de las pagina
+                    'página principal':function(){window.location="index.php";},
+                    'iniciar sesión':function(){window.location="validar.php";},
+                    'registrar':function(){window.location="registro.php";},
+                    'cerrar sesión':function(){window.location="cierre.php";},
+                    'menú':function(){//menu e información de todos los recursos educativos y funcionalidades de la creación de recursos, presentacion, visialización, editar, eliminación y seguir.
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "Si deseas ver la página principal, pronuncia presentación. Puedes verificar tus datos personales al pronunciar información personal, pero tambien puedes realizar otras operaciones sobre los recursos educativos, solo debes mencionar la palabra visualizar, crear, editar o eliminar según la acción que requieras utilizar."; 
+                        sintetizadorVoz(texto);
+                    },//en general cada palabra que esta en verde son las palabras que se tienen que decir para moverse entre cada una de las funcionalidades de la plataforma GAIA Tools
+                    'presentación':function(){window.location="principal.php";},
+                    'visualizar':function(){window.location="listarRecurso.php";},
+                    'información personal':function(){window.location="informacionPersonal.php";},
+                    'crear':function(){window.location="crearRecurso.php";},
+                    'editar':function(){window.location="editarRecurso.php";},
+                    'eliminar':function(){window.location="eliminarRecurso.php";},
+                    'siguiente':function(){
+                        if('{{idCuest}}'==='5'){
+                            posPagina++;
+                            gcse.pause();
+                            gcse.src = "";
+                            var contPagina = "#leerpag"+posPagina;
+                            sintetizadorVoz($(contPagina).val());
+                        }else if('{{idCuest}}'==='1' || '{{idCuest}}'==='2' || '{{idCuest}}'==='3' || '{{idCuest}}'==='4' || '{{idCuest}}'==='6'){
+                            dispararFrom();
+                        }
+                    },
+                    'atrás':function(){
+                        if('{{idCuest}}'===5){
+                            posPagina--;
+                            gcse.pause();
+                            gcse.src = "";
+                            var contPagina = "#leerpag"+posPagina;
+                            sintetizadorVoz($(contPagina).val());
+                        }
+                    },
+                    'pregunta':function(){//cada palabra que esta en verde son las palabras que se tienen que decir para moverse entre cada una de las funcionalidades de la plataforma GAIA Tools
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "{{datosPreg.pregunta}} + recuerda pronunciar ";
+                        if('{{idCuest}}'==='1' || '{{idCuest}}'==='2' || '{{idCuest}}'==='3'){
+                            texto = texto+" la palabra opciones para listar las posibles respuestas.";
+                        }else{
+                            texto = texto+" la palabra respuesta seguido de la respuesta.";
+                        }
+                        sintetizadorVoz(texto);
+                    },
+                    'título':function(){
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "{{datosPreg.pregunta}}";
+                        sintetizadorVoz(texto);
+                    },
+                    'contenido':function(){
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "{{respAbierta}}";
+                        sintetizadorVoz(texto);
+                    },
+                    'opciones' : function(){
+                        gcse.pause();
+                        gcse.src = "";
+                        sintetizadorVoz($('#opcionesPreg').val()+" Recuerda pronunciar la palabra respuesta seguido del número de la opción. Si necesitas repetir las posibles elecciónes pronuncia la palabra opciones.");
+                    },
+                    'respuesta *v' : function(v){
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto =""; var opcionE="";
+                        v = v.toLowerCase();
+                        if('{{idCuest}}'==='4'){
+                            texto = "Su respuesta ha sido: "+v+" Para continuar y calificar su respuesta pronuncie siguiente.";
+                            $('#respuesta').val(v);
+                        }else if('{{idCuest}}'==='1' || '{{idCuest}}'==='2' || '{{idCuest}}'==='3'){
+                            opcionE = "#"+v;
+                            if(v==="verdadero"){ 
+                                opcionE = "#2"; 
+                            }else if(v==="falso"){ 
+                                opcionE = "#1"; 
+                            }
+                            //var vi = $(v).html();
+                            texto = "Su opción elegida es "+v+" Para continuar y calificar su respuesta pronuncie siguiente.";//+" "+(opcionE).html();
+                            jQuery(opcionE).attr('checked', true);
+                        }
+                        sintetizadorVoz(texto);
+                    },
+                    'continuar':function(){
+                        if('{{idCuest}}'==='1' || '{{idCuest}}'==='2' || '{{idCuest}}'==='3' || '{{idCuest}}'==='4'){
+                            dispararSiguiente();
+                        }else if('{{idCuest}}'==='5'){
+                            gcse.pause();
+                            gcse.src = "";
+                            sintetizadorVoz($('#leerpag1').val());
+                        }
+                    },
+                };
+                // OPTIONAL: activate debug mode for detailed logging in the console
+                annyang.debug();
+                // Add voice commands to respond to
+                annyang.addCommands(commands);
+                // OPTIONAL: Set a language for speech recognition (defaults to English)
+                annyang.setLanguage('es');
+                // Start listening. You can call this here, or attach this call to an event, button, etc.
+                annyang.start();
+            } else {
+                $(document).ready(function() {
+                    $('#unsupported').fadeIn('fast');
+                });
+            }
+        //}
+</script>
+
+{% endblock %}

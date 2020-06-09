@@ -1,0 +1,140 @@
+{% extends "layout.twig.html" %}{% block inner %}
+<div id="formulario"></div>
+<script type="text/javascript">
+    var fruits = [];
+    function guardarTemp(urlAplicacion){
+        if('{{noGuardo}}'===0){document.forms['pregunta'].submit();}
+        $("#formulario").html('<form id="cambapli" action="'+urlAplicacion+'" method="post">\n\
+                                <input type="hidden" name="titulo" value="'+'{{titulo}}'+'" />\n\
+                                <input type="hidden" name="id" value="'+'{{id}}'+'" />\n\
+                                <input type="hidden" name="existente" value="'+'{{existente}}'+'" />\n\
+                                <input type="hidden" name="modificado" value="0" />\n\
+                               </form>');
+        document.forms['cambapli'].submit();
+    }
+    $(document).ready(function(){
+        /* Una vez que se cargo la pagina , llamo a todos los autocompletes y los inicializo */
+        $('.autocomplete').autocomplete();
+    });
+    "{%if existente=='1'%}";
+        var opcionesExistentes = $("#opcionesExist").val();
+        var opcionExistent = opcionesExistentes.split(',-%');
+        var i; tam=opcionExistent.length;
+        for (i=0; i<tam; i++){ insertOption(opcionExistent[i]); }
+    "{% endif %}";
+    function insertOption(elm) {
+        fruits.push(elm); 
+        var nuevaOpcion=document.createElement('option');
+        nuevaOpcion.text=elm;
+        var selectRespuesta=document.getElementById("respuesta");
+        try {
+            selectRespuesta.add(nuevaOpcion,null);
+            var respuestas1 = document.getElementById("respuesta1");
+        } catch(ex) { selectRespuesta.add(nuevaOpcion); }
+        var valu = $("#respuestas1").val();
+        if(valu==""){
+            $("#respuestas1").val(elm),
+            $("#opcione").val('');
+        }else{
+            $("#respuestas1").val(valu+',-%'+elm),
+            $("#opcione").val('');
+        }
+        $("#opcione").val("");
+    }
+    function removeOption() {
+        var selectRespuesta=document.getElementById("respuesta");
+        var respuesta=$("#respuesta").val();
+        selectRespuesta.remove(selectRespuesta.selectedIndex);
+        var valu = $("#respuestas1").val();
+        $("#respuestas1").val(valu.replace(respuesta+",-%",""));
+    }
+</script>
+<div class="presentacion">
+    <p align="right" class="num"><font color="#0489B1" size="5">{{posicion}}</font></p>
+    {%if posicion == 1 and msgA == '' and msgB == '' and msgC == ''%}
+        <font color="#0489B1">¡{{nombreCorto}}!, hay 3 celdas (A,B,C), son los 3 valores que el estudiante asociará con la seña correspondiente, lo que usted debe escribir en cada celda, es el valor a evaluar, en singular (si por ejemplo ésta evaluando los animales, gato sería un valor), a medida que se escribe se listarán los valores con seña disponible, debe elegir alguno de estos; al frente de cada celda hay un botón que permite cargar la imágen asociada al valor escrito, se deben cargar las 3 imágenes, una por cada valor, cada una debe pesar menos de 2 MB (2000 KB) y debe estar en formato JPEG o PNG.
+        <br>Las señas se generan automáticamente al finalizar. </font><br><font color="#57934E">La retroalimentación servirá para indicarle al estudiante una 'pista' de cómo responder correctamente cuando este falle en la asociación.</font>
+    {% endif %}
+    {%if msgA != '' or msgB != '' or msgC != ''%} <font color="#A34B4E">¡{{nombreCorto}}, algo pasó!.</font> {% endif %}
+    {%if posicion == 2 and msgA == '' and msgB == '' and msgC == ''%}
+        <font color="#0489B1">¡{{nombreCorto}}, la primera estuvo muy bien hecha!, así mismo se debe construir esta segunda. </font><br><font color="#57934E">La seña se genera automáticamente.</font>
+    {% endif %}
+    {%if posicion > 2 and msgA == '' and msgB == '' and msgC == ''%}
+        <font color="#0489B1">¡{{nombreCorto}}, se ésta construyendo excelentemente esta actividad para evaluar {{titulo}}!, todos los ítems de evaluación se construyen así mismo. </font><br><font color="#57934E">La seña se genera automáticamente.</font>
+    {% endif %}
+    <!--<header><h2><font color="#0489B1" size="5">Actividad de emparejar para la evaluación de {{titulo}} en lengua de señas colombiana</font></h2></header>-->
+    <div id="pregCerrada">
+        <header id="tipoActividad"><h2></h2></header>
+        <form class="sesion" id="pregunta" action="ensenaloEmparejar.php" method="post" enctype="multipart/form-data">
+            <p class="preg">
+                <input type="hidden" name="titulo" value="{{titulo}}">
+                <input type="hidden" name="id" value="{{id}}">
+                <input type="hidden" name="existente" value="{{existente}}" />
+                <input type="hidden" name="origen" value="{{origen}}" />
+                <input type='hidden' name='idItem' value="{{idItem}}" />
+                <input type='hidden' name='posicion' value="{{posicion}}" />
+                {% if modificado=='0' %}<input type="hidden" name="modificado" value="1">{% else %}<input type="hidden" name="modificado" value="0">{% endif %}
+                <br><br>
+                <table>
+                    <tr>
+                        <td><label>A)</label></td>
+                        <td>
+                            <div class="autocomplete"><input type="text" data-source="search.php?search=" name="a" required="required" placeholder="Escriba la opción de respuesta a)" value="{%if msgA != '' or msgB != '' or msgC != '' or existente=='1' %}{{a}}{% endif %}" autocomplete="off"/></div>
+                            {% if existente=='1' %}<input type="hidden" name="aid" value="{{aid}}">{% endif %}
+                        </td>
+                        <td><input type="file" class="file" name="uploadedfileA" title="sube una imagen" required="required" /><font color="#A34B4E">{{msgA}}</font></td>
+                    </tr>
+                    <tr>
+                        <td><label>B)</label></td>
+                        <td>
+                            <div class="autocomplete"><input type="text" data-source="search.php?search=" name="b" required="required" placeholder="Escriba la opción de respuesta b)" value="{%if msgA != '' or msgB != '' or msgC != '' or existente=='1' %}{{b}}{% endif %}" autocomplete="off"/></div>
+                            {% if existente=='1' %}<input type="hidden" name="bid" value="{{bid}}">{% endif %}
+                        </td>
+                        <td><input type="file" class="file" name="uploadedfileB" title="sube una imagen" required="required"/><font color="#A34B4E">{{msgB}}</font></td>
+                    </tr>
+                    <tr>
+                        <td><label>C)</label></td>
+                        <td>
+                            <div class="autocomplete"><input type="text" name="c" required="required" placeholder="Escriba la opción de respuesta c)" value="{%if msgA != '' or msgB != '' or msgC != '' or existente=='1' %}{{c}}{% endif %}" data-source="search.php?search=" autocomplete="off"/></div></td>
+                            {% if existente=='1' %}<input type="hidden" name="cid" value="{{cid}}">{% endif %}
+                        <td><input type="file" class="file" name="uploadedfileC" title="sube una imagen" required="required" /><font color="#A34B4E">{{msgC}}</font></td>
+                    </tr>
+                </table>
+                <input type="hidden" name="msgA" value="{{msgA}}" /><input type='hidden' name='msgB' value="{{msgB}}" /><input type='hidden' name='msgC' value="{{msgC}}" />
+                <div id="partItem"><label>RETROALIMENTACIÓN:</label><textarea id="respAb" class="textarea1" name="retroalimentacion" placeholder="Retroalimentación para el estudiante en caso de que este falle" required="required">{%if msgA != '' or msgB != '' or msgC != '' or existente=='1' %}{{retroalimentacion}}{% endif %}</textarea></div>
+                <input type="hidden" value="{%if existente=='1'%}{{respuesta}}{% endif %}" id="respCorr" />
+                <input type="hidden" value="{%if existente=='1'%}{{opciones}}{% endif %}" id="opcionesExist" />
+                <input type="hidden" id="respuestas1" name="respuestas1" >
+                {% if existente ==1 or origen!='' %}
+                <br><br><br><button id="editarSiguiente" onclick="guardarTemp('');">Guardar</button><br><br>
+                {% else %}
+                    <input class="btn" type="submit" name="guardarCerrada" id="guardar" value="Guardar y Continuar">
+                    <input class="btn" type="submit" name="finalizarCerrada" id="finalizar" value ="Guardar y finalizar">
+                {% endif %}
+            </p>
+        </form>
+        {% if existente ==1 or origen!='' %}
+            <br><br><button id="editarSiguiente" onclick="guardarTemp('listarItems.php');">Regresar</button>
+        {% endif %}
+        {%if existente!='1' and origen==''%}
+        <!--form action="guardarDatosEmp.php" method="post">
+            <input type="hidden" name="titulo" value="{{titulo}}">
+            <input type="hidden" name="id" value="{{id}}">
+            <input class="btn" type="submit" value="FINALIZAR">
+        </form-->
+        <form action="finalizar.php" method="post" id="formFinal">
+            <input type="hidden" name="titulo" value="{{titulo}}">
+            <input type="hidden" name="id" value="{{id}}">
+            <input class="btn" type="submit" value="FINALIZAR">
+        </form>
+        
+        <br>
+        <font color="#57934E">Guardar y Continuar para almacenar y seguir construyendo otro ítem, guardar y finalizar para almacenar y terminar o presione finalizar para terminar sin guardar.</font>
+        {% else %}
+            <form action="editarRecurso.php" method="post">
+                <!--input class="btn" type="submit" value="FINALIZAR"-->
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

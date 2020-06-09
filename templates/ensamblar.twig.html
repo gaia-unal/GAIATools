@@ -1,0 +1,54 @@
+{% extends "layout.twig.html" %}{% block inner %}
+<div id="formulario"></div>
+<script type="text/javascript">
+    if ('{{idItem}}'!='0' && '{{modificado}}'=='1'){
+        $("#formulario").html('<form id="siguiente" action="'+'{{url}}'+'" method="post" ><input type="hidden" name="titulo" value="'+'{{titulo}}'+'" /><input type="hidden" name="id" value="'+'{{id}}'+'" /><input type="hidden" name="idItem" value="'+'{{idItem}}'+'" /><input type="hidden" name="existente" value="'+'{{existente}}'+'" /><input type="hidden" name="modificado" value="0" /></form>');
+        document.forms['siguiente'].submit();   
+    }
+    function guardarTemp(urlAplicacion, idItem){
+        $("#formulario").html('<form id="cambapli" action="'+urlAplicacion+'" method="post" ><input type="hidden" name="titulo" value="'+'{{titulo}}'+'" /><input type="hidden" name="id" value="'+'{{id}}'+'" /><input type="hidden" name="origen" value="existe" /><input type="hidden" name="existente" value="'+'{{existente}}'+'" /></form>');
+        document.forms['cambapli'].submit();  
+    }
+</script>
+<div class="presentacion">
+    <header><h2>INTEGRADOR: "{{titulo}}"</h2></header><br><br>
+    <div>
+        <br>
+        <h3 class="bienvenida" autofocus>
+            Agregue uno a uno los objetos de aprendizaje relacionados con la temática y la necesidad de 
+            aprendizaje del contenido que acaba de construir. La selección se realiza verificando el 
+            objeto y presionando el botón Agregar. La relación de tu contenido con otros recursos educativos
+            permite a otros usuarios ampliar su aprendizaje. El botón Finalizar permite terminar la 
+            creación de este recurso educativo. <br><br>
+        </h3>
+    </div>
+    <form action="ensamblar.php" method="post">
+        <input name="id" value="{{id}}" type="hidden" />
+        <input name="titulo" value="{{titulo}}" type="hidden" />
+        <input name="existente" value="{{existente}}" type="hidden" />
+        <input name="modificado" value="{{modificado}}" type="hidden" />
+        <input name="categoriaEle" value="{{categoriaEle}}" type="hidden" />
+        <input name="needEle" value="{{needEle}}" type="hidden" />
+        <div id="items">
+            {% for recurso in recursos %}
+                <input type="radio" name="idItem" value="{{recurso.id}}"/>
+                <b>{{recurso.title}}: </b>{{recurso.description}}<br>
+            {% endfor %}
+        </div>
+        <label>{{mensaje}}</label><br>
+        <input class="btn" autofocus type="submit" name="agregar" value="AGREGAR" />
+        <!--input class="btn" type="submit" name="eliminar" value="ELIMINAR" /-->
+    </form>
+    {%if existente!='1' and origen==''%}
+        <form action="finalizar.php" method="post" id="formFinal">
+            <input type="hidden" name="titulo" value="{{titulo}}">
+            <input type="hidden" name="id" value="{{id}}">
+            <input class="btn" type="submit" value="FINALIZAR">
+        </form>
+        {% else %}
+        <form action="editarRecurso.php" method="post">
+            <!--input class="btn" type="submit" value="FINALIZAR"-->
+        </form>
+        {% endif %}
+</div>
+{% endblock %}

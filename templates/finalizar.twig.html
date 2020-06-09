@@ -1,0 +1,100 @@
+{% extends "layout.twig.html" %}
+{% block inner %}
+<div class="presentacion">
+<font color="#57934E" size="5">{{nombreCorto}}, usted ha finalizado.<br><br></font>
+<font color="#585858" size="3">
+    <label autofocus>El recurso educativo llamado {{titulo}} fue construido contando con un total de
+        {{cantidad}} preguntas.</label><br><br>
+    <label>Actualmente, este recurso solo puede ser observado por usted, el autor, 
+        pero a través de la opción "PUBLICAR" cualquier otra persona podrá visualizarlo 
+        al ingresar a la herramienta GAIA-Tools.
+    </label><br><br>
+    <!--label>Adicional a esto, también podrá permitir agregar este recurso educativo al repositorio
+        <a href="">ROAP</a> a través de la opción "TRANSFERIR", de la cual se le solicitará alguna información
+        adicional sobre este objeto de aprendizaje para mantener los beneficios de RAIM
+    </label><br><br-->
+</font>
+    <form id="formPublicar" action="finalizar.php" method="post">
+        <input type="hidden" name="titulo" value="{{titulo}}">
+        <input type="hidden" name="id" value="{{id}}">
+        <input type="hidden" name="estado" value="1" >
+        <br><br><label id="confirmFinal">{{mensaje}}</label><br>
+        <input class="btn" type="submit" id="finalizar" value="PUBLICAR"> 
+    </form>
+    {% if usuario==1 %} <!-- solo el usuario administrador puede ver esto-->
+    <form action="transferencia.php" method="post" id="formTrans">
+        <input type="hidden" name="id" value="{{id}}">
+        <input class="btn" type="submit" id="finalizar 2" value="COMPARTIR CON ROAp" /> 
+    </form>
+    {% endif %}
+    <form action="principal.php" method="post" id="formFinal">
+        <input class="btn" type="submit" value="FINALIZAR">
+    </form>
+</div>
+
+<script src="http://code.jquery.com/jquery-1.12.1.js"></script>
+<script src="http://code.responsivevoice.org/responsivevoice.js"></script>
+
+<script>
+    function dispararFormPublicar(){
+        $("#formPublicar").submit();
+    }
+    function dispararFormTrans(){
+        $("#formTrans").submit();
+    }
+    function dispararFormFinal(){
+        $("#formFinal").submit();
+    }
+     var onload = function cargarRE (){
+         if('{{mensaje}}'===''){
+             var texto = /*$("#contenido1").html()+*/"Al pronunciar publicar, este recurso educativo estará disponible para todos los visitantes de GAIATools. Si pronuncias transferir, este recurso educativo sera visible en el repositorio de objetos de aprendizaje ROAP. Pero si no deseas ninguna de las anteriores solo pronuncia finalizar. Recuerde que puede consultar el menú o puede cerrar sesión. ";
+         }else{
+             var texto = '{{mensaje}}';
+         }
+        
+        sintetizadorVoz(texto);
+    }
+    //var valor = localStorage.getItem("controlador");
+        //if(valor==="true"){
+            "use strict";//inicio de la implementación de la libreria annyang para el ingreso de comandos de voz con cada una de las palabras que se implementan y que a medida de que la plataforma se mueve entre las distintas paginas, se informa las palabras que estan activas y con las que se puede logear y moverse entre ellas.
+            if (annyang) {
+                "use strict"
+                var commands = {
+                    'cerrar sesión':function(){window.location="cierre.php";},
+                    'menú':function(){//menu e información de todos los recursos educativos y funcionalidades de la creación de recursos, presentacion, visialización, editar, eliminación y seguir.
+                        gcse.pause();
+                        gcse.src = "";
+                        var texto = "Si deseas ver la página principal, pronuncia presentación. Puedes verificar tus datos personales al pronunciar información personal, pero tambien puedes realizar otras operaciones sobre los recursos educativos, solo debes mencionar la palabra visualizar, crear, editar o eliminar según la acción que requieras utilizar."; 
+                        sintetizadorVoz(texto);
+                    },//cada una de las palabras de los comando de voz, realizaran acciones distinta, despues de cada sección de lectura de pantalla se informara que comandos de voz estan activados y las palabras que tinen que decir para cada funcionalidad y recorrido entre cada una de las paginas
+                    'presentación':function(){window.location="principal.php";},
+                    'información personal':function(){window.location="informacionPersonal.php";},
+                    'visualizar':function(){window.location="listarRecurso.php";},
+                    'editar':function(){window.location="editarRecurso.php";},
+                    'eliminar':function(){window.location="eliminarRecurso.php";},
+                    'transferir':function(){//en general cada palabra que esta en verde son las palabras que se tienen que decir para moverse entre cada una de las funcionalidades de la plataforma GAIA Tools
+                        dispararFormTrans();
+                    },
+                    'publicar':function(){
+                        dispararFormPublicar();
+                    },
+                    'finalizar':function(){
+                        dispararFormFinal();
+                    }
+                };
+                // OPTIONAL: activate debug mode for detailed logging in the console
+                annyang.debug();
+                // Add voice commands to respond to
+                annyang.addCommands(commands);
+                // OPTIONAL: Set a language for speech recognition (defaults to English)
+                annyang.setLanguage('es');
+                // Start listening. You can call this here, or attach this call to an event, button, etc.
+                annyang.start();
+            } else {
+                $(document).ready(function() {
+                    $('#unsupported').fadeIn('fast');
+                });
+            }
+        //}
+</script>
+{% endblock %}

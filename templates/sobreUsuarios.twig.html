@@ -1,0 +1,19 @@
+{% extends "layout.twig.html" %}
+{% block inner %}
+<div class="presentacion" >
+    <!--form action="sobreUsuarios.php" method="post"-->
+        <header autofocus><b>Datos estadisticos básicos sobre los usuarios existentes</b></header><br>
+        <div id='recursos'></div>
+        <!--input type="hidden" name="prueba" />
+        <input class="btn" type="submit" value="GUARDAR"> 
+    </form-->
+</div>
+<script type="text/javascript">
+    var onload = function cargarRE (){
+        var datos = {id : '{{idUsuario}}' };
+        $.post("../ajax/reporteUsuario-ajax.php", datos, function(data) {
+            $("#recursos").html(data);
+        });
+    }
+</script>
+{% endblock %}

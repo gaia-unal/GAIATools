@@ -1,0 +1,24 @@
+{% extends "layout.twig.html" %}
+{% block inner %}
+<div id="formulario"></div>
+<script type="text/javascript">
+    function guardarTemp(urlAplicacion){
+        var titulo ='{{titulo}}';
+        var id ='{{id}}';
+        $("#formulario").html('<form id="cambapli" action="'+urlAplicacion+'" method="post">\n\
+                                <input type="hidden" name="titulo" value="'+titulo+'"></input>\n\
+                                <input type="hidden" name="id" value="'+id+'"></input>\n\
+                               </form>');
+        document.forms['cambapli'].submit();
+    }
+</script>
+<div class="presentacion">
+    <header><h2><font color="#0489B1" size="5">{{nombreCorto}}, usted creará una actividad de opción correcta para evaluar {{titulo}} en lengua de señas</font></h2><br><font color="#57934E">¿Desea empezar?, presione continuar, de lo contrario presione atrás.</font></header>
+    <div id="tipopreg">
+        <!--button id="actividad" class="selecPreg btn-default" onclick="guardarTemp('pregCerradaMultiple.php');">Pregunta Cerrada de Múltiple Respuesta</button-->
+        <button id="actividad" class="selecPreg btn-default" onclick="guardarTemp('traductor.php');">Atrás<br><br><img id="retornar" src="../images/17.png" width="20" heigth="20" align="center"></button>
+        <button id="actividad" class="selecPreg btn-default" onclick="guardarTemp('ensenaloOptionCorrect.php');">Continuar<br><br><img id="retornar" src="../images/18.png" width="20" heigth="20" align="center"></button>
+    </div>
+    <br>
+</div>
+{% endblock %}
